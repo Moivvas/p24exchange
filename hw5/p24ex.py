@@ -60,31 +60,32 @@ async def request(url):
 desired_currencies = ["EUR", "USD"]
 
 async def get_exchange():
-    tasks = [request(url) for url in urls]
-    responses = await asyncio.gather(*tasks)
-    for res in responses:
-        if res:
-            for currency_dict in res["exchangeRate"]:
-                if currency_dict["currency"] in desired_currencies:
-                    result = {
-                        res["date"]: {
-                            currency_dict["currency"]: {
-                                "saleRate": currency_dict["saleRate"],
-                                "purchaseRate": currency_dict["purchaseRate"]
-                            }
-                        }
-                    }
-                    main_list.append(result)
+    
+    # tasks = [request(url) for url in urls]
+    # responses = await asyncio.gather(*tasks)
+    # for res in responses:
+    #     if res:
+    #         for currency_dict in res["exchangeRate"]:
+    #             if currency_dict["currency"] in desired_currencies:
+    #                 result = {
+    #                     res["date"]: {
+    #                         currency_dict["currency"]: {
+    #                             "saleRate": currency_dict["saleRate"],
+    #                             "purchaseRate": currency_dict["purchaseRate"]
+    #                         }
+    #                     }
+    #                 }
+    #                 main_list.append(result)
 
 async def main():
     sys_input_int = check_sys_input()
     
     if sys_input_int == 0:
         pass
-
-    urls_creator(sys_input_int)
-    
-    await get_exchange()
+    else:
+        urls_creator(sys_input_int)
+        
+        await get_exchange()
 
     for result in main_list:
         print(result)
