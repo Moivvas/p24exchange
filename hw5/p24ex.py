@@ -59,7 +59,8 @@ async def request(url):
 
 desired_currencies = ["EUR", "USD"]
 
-async def get_exchange():
+async def get_exchange(desired_currencies[0]):
+    
     
     # tasks = [request(url) for url in urls]
     # responses = await asyncio.gather(*tasks)
