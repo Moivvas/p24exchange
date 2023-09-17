@@ -16,6 +16,7 @@ except IndexError as e:
     sys.exit()
 
 def check_sys_input() -> int:
+    global sys_input
     if sys_input:
         try:
             sys_input_int = int(sys_input)
@@ -59,37 +60,32 @@ async def request(url):
 
 desired_currencies = ["EUR", "USD"]
 
-async def get_exchange(desired_currencies[0]):
-    
-    
-    # tasks = [request(url) for url in urls]
-    # responses = await asyncio.gather(*tasks)
-    # for res in responses:
-    #     if res:
-    #         for currency_dict in res["exchangeRate"]:
-    #             if currency_dict["currency"] in desired_currencies:
-    #                 result = {
-    #                     res["date"]: {
-    #                         currency_dict["currency"]: {
-    #                             "saleRate": currency_dict["saleRate"],
-    #                             "purchaseRate": currency_dict["purchaseRate"]
-    #                         }
-    #                     }
-    #                 }
-    #                 main_list.append(result)
+async def get_exchange(url):
+    res = await request(url)
+    if res is None:
+        return None
+
+    currency_date_dict = {res["date"]: {}}
+
+    for cur in desired_currencies:
+        exchange, *_ = list(filter(lambda el: el['currency'] == cur, res["exchangeRate"]))
+
+        result_exc = f"saleRate: {exchange['saleRate']}, purchaseRate: {exchange['purchaseRate']}"
+        currency_date_dict[res["date"]][cur] = result_exc
+    return currency_date_dict
 
 async def main():
+    print(datetime.now())
     sys_input_int = check_sys_input()
     
     if sys_input_int == 0:
         pass
     else:
-        urls_creator(sys_input_int)
+        tasks = [get_exchange(url) for url in urls_creator(sys_input_int)]
+        results = await asyncio.gather(*tasks)
         
-        await get_exchange()
-
-    for result in main_list:
-        print(result)
-
+    for el in results:
+        print(el)
+    print(datetime.now())
 if __name__ == "__main__":
     asyncio.run(main())
